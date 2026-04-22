@@ -1,0 +1,2615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EmotIA</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lila-deep:   #A98FD4;
+    --lila-mid:    #C9B8E8;
+    --lila-pale:   #E8E0F5;
+    --lila-ghost:  #F5F1FC;
+    --sage:        #7C9E8A;
+    --sage-light:  #B8D4C3;
+    --sage-pale:   #EAF4EE;
+    --ink:         #2D2448;
+    --ink-mid:     #5A4E7A;
+    --mist:        #FAFAFE;
+    --white:       #FFFFFF;
+    --warn:        #D4845A;
+    --low-color:   #7AAF8A;
+    --mid-color:   #C4965A;
+    --high-color:  #C46A6A;
+    --r: 22px;
+    --r-sm: 14px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(145deg, #EDE8F8 0%, #E0EDE6 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+    gap: 40px;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    text-align: center;
+    animation: fadeDown 0.6s ease both;
+  }
+  .page-header .logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .logo-img { width: 52px; height: 52px; object-fit: contain; }
+  .page-header h1 {
+    font-family: 'Lora', serif;
+    font-size: 2rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .page-header h1 span { color: var(--lila-deep); }
+  .page-header p { font-size: 0.85rem; color: var(--ink-mid); opacity: 0.7; }
+
+  /* ── NAV ── */
+  .screen-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 860px;
+    animation: fadeDown 0.7s ease both;
+  }
+  .nav-btn {
+    padding: 8px 16px;
+    border-radius: 50px;
+    border: 1.5px solid var(--lila-mid);
+    background: rgba(255,255,255,0.6);
+    color: var(--ink-mid);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--lila-deep);
+    color: white;
+    border-color: var(--lila-deep);
+    box-shadow: 0 4px 14px rgba(169,143,212,0.4);
+  }
+
+  /* ── PHONE ── */
+  .phone {
+    width: 375px;
+    min-height: 780px;
+    background: var(--mist);
+    border-radius: 50px;
+    box-shadow:
+      0 50px 100px rgba(45,36,72,0.22),
+      0 0 0 10px var(--ink),
+      0 0 0 11px rgba(169,143,212,0.3);
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    animation: phoneIn 0.45s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .phone.active { display: flex; }
+
+  @keyframes phoneIn {
+    from { opacity:0; transform: translateY(30px) scale(0.96); }
+    to   { opacity:1; transform: translateY(0) scale(1); }
+  }
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .notch {
+    width: 110px; height: 28px;
+    background: var(--ink);
+    border-radius: 0 0 18px 18px;
+    margin: 0 auto;
+    position: relative; z-index: 10;
+  }
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 22px 0;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--ink-mid);
+  }
+  .screen { flex:1; display:flex; flex-direction:column; overflow-y:auto; }
+
+  /* ════════════════════════════════
+     SCREEN 1 — LOGIN
+  ════════════════════════════════ */
+  .login-hero {
+    background: linear-gradient(160deg, var(--lila-deep) 0%, var(--ink) 100%);
+    padding: 44px 28px 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .login-hero::before {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(201,184,232,0.15);
+    top: -60px; right: -60px;
+  }
+  .login-hero::after {
+    content: '';
+    position: absolute;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(124,158,138,0.15);
+    bottom: -30px; left: -20px;
+  }
+  .hero-logo { width: 68px; height: 68px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.9; }
+  .login-hero h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.9rem;
+    color: white;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .login-hero .tagline {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.72);
+    text-align: center;
+    line-height: 1.6;
+    max-width: 240px;
+  }
+  .free-badge {
+    background: rgba(124,158,138,0.3);
+    border: 1px solid rgba(124,158,138,0.5);
+    color: #C8EDD8;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+  }
+
+  .login-form {
+    padding: 28px 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .form-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--ink-mid);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    display: block;
+  }
+  .form-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r-sm);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: white;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-input:focus {
+    border-color: var(--lila-deep);
+    box-shadow: 0 0 0 3px rgba(169,143,212,0.15);
+  }
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--lila-deep), #8A6BC4);
+    color: white;
+    border: none;
+    border-radius: var(--r-sm);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(169,143,212,0.4);
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(169,143,212,0.5); }
+  .login-links {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--ink-mid);
+    opacity: 0.65;
+  }
+  .login-links a { color: var(--lila-deep); text-decoration: none; font-weight: 700; }
+
+  /* ════════════════════════════════
+     SCREEN 2 — DASHBOARD
+  ════════════════════════════════ */
+  .dash-top {
+    background: linear-gradient(150deg, var(--lila-deep) 0%, var(--ink) 100%);
+    padding: 18px 22px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .dash-top::after {
+    content: '';
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(201,184,232,0.12);
+    bottom: -80px; right: -40px;
+  }
+  .dash-greeting { font-size: 0.78rem; color: rgba(255,255,255,0.65); margin-bottom: 2px; }
+  .dash-name {
+    font-family: 'Lora', serif;
+    font-size: 1.45rem;
+    color: white;
+    font-weight: 600;
+  }
+  .dash-date {
+    margin-top: 8px;
+    display: inline-block;
+    background: rgba(255,255,255,0.14);
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+  }
+
+  .dash-body { padding: 0 16px 16px; margin-top: -14px; }
+
+  .hrv-card {
+    background: white;
+    border-radius: var(--r);
+    padding: 18px;
+    box-shadow: 0 8px 32px rgba(45,36,72,0.12);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1.5px solid var(--lila-pale);
+  }
+  .hrv-ring {
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    background: conic-gradient(var(--lila-deep) 0% 72%, var(--lila-pale) 72% 100%);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .hrv-ring::after {
+    content: '';
+    position: absolute;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: white;
+  }
+  .hrv-inner {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .hrv-num { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; color: var(--lila-deep); line-height: 1; }
+  .hrv-unit { font-size: 0.52rem; color: var(--ink-mid); opacity: 0.6; font-weight: 700; }
+  .hrv-info { flex: 1; }
+  .hrv-title { font-size: 0.82rem; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .hrv-sub { font-size: 0.72rem; color: var(--ink-mid); opacity: 0.6; line-height: 1.4; }
+  .hrv-badge {
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: var(--sage-pale);
+    color: var(--sage);
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  .sec-label {
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+    opacity: 0.45;
+    margin: 14px 0 8px;
+  }
+
+  .mood-strip {
+    background: white;
+    border-radius: var(--r-sm);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1.5px solid var(--lila-pale);
+    margin-bottom: 12px;
+  }
+  .mood-strip-label { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+  .mood-emojis { display: flex; gap: 6px; }
+  .m-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem; cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .m-dot:hover { transform: scale(1.2); }
+  .m-dot.e1{background:#FDDEDE} .m-dot.e2{background:#FDE8D4}
+  .m-dot.e3{background:#FDF6D4} .m-dot.e4{background:#D4F0DD} .m-dot.e5{background:#C8EDD8}
+
+  .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .q-tile {
+    background: white;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r-sm);
+    padding: 14px;
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+  .q-tile:hover { box-shadow: 0 6px 20px rgba(169,143,212,0.18); transform: translateY(-1px); }
+  .q-tile .ti { font-size: 1.4rem; margin-bottom: 6px; }
+  .q-tile .tl { font-size: 0.78rem; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .q-tile .ts { font-size: 0.68rem; color: var(--ink-mid); opacity: 0.5; margin-top: 2px; }
+
+  /* ════════════════════════════════
+     SCREEN 3 — EVALUACIÓN HRV
+  ════════════════════════════════ */
+  .eval-header {
+    background: linear-gradient(135deg, var(--lila-pale), var(--lila-ghost));
+    padding: 18px 22px 16px;
+    border-bottom: 1px solid var(--lila-mid);
+  }
+  .eval-header h3 {
+    font-family: 'Lora', serif;
+    font-size: 1.15rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .eval-header p { font-size: 0.76rem; color: var(--ink-mid); opacity: 0.65; margin-top: 3px; }
+
+  .hrv-measure-card {
+    margin: 16px;
+    background: white;
+    border-radius: var(--r);
+    padding: 24px 20px;
+    border: 1.5px solid var(--lila-pale);
+    box-shadow: 0 4px 20px rgba(169,143,212,0.1);
+    text-align: center;
+  }
+  .finger-anim {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--lila-pale), var(--lila-mid));
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.4rem;
+    position: relative;
+    animation: pulse-ring 2s ease-in-out infinite;
+  }
+  @keyframes pulse-ring {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(169,143,212,0.4); }
+    50% { box-shadow: 0 0 0 16px rgba(169,143,212,0); }
+  }
+  .hrv-step-title {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .hrv-step-desc { font-size: 0.78rem; color: var(--ink-mid); line-height: 1.6; opacity: 0.75; margin-bottom: 18px; }
+
+  .hrv-progress-wrap { margin-bottom: 14px; }
+  .hrv-prog-labels { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--ink-mid); opacity: 0.55; margin-bottom: 5px; }
+  .hrv-prog-bar { height: 8px; background: var(--lila-pale); border-radius: 50px; overflow: hidden; }
+  .hrv-prog-fill { height: 100%; width: 45%; background: linear-gradient(90deg, var(--lila-mid), var(--lila-deep)); border-radius: 50px; animation: grow 3s ease-in-out infinite alternate; }
+  @keyframes grow { from{width:10%} to{width:85%} }
+
+  .hrv-waveform {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    margin-bottom: 16px;
+    height: 40px;
+  }
+  .wv-bar {
+    width: 4px;
+    border-radius: 2px;
+    background: var(--lila-mid);
+    animation: wave 1.2s ease-in-out infinite;
+  }
+  .wv-bar:nth-child(1){height:12px;animation-delay:0s}
+  .wv-bar:nth-child(2){height:24px;animation-delay:0.1s}
+  .wv-bar:nth-child(3){height:36px;animation-delay:0.2s;background:var(--lila-deep)}
+  .wv-bar:nth-child(4){height:18px;animation-delay:0.3s}
+  .wv-bar:nth-child(5){height:8px;animation-delay:0.4s}
+  .wv-bar:nth-child(6){height:28px;animation-delay:0.5s}
+  .wv-bar:nth-child(7){height:40px;animation-delay:0.6s;background:var(--lila-deep)}
+  .wv-bar:nth-child(8){height:20px;animation-delay:0.7s}
+  .wv-bar:nth-child(9){height:10px;animation-delay:0.8s}
+  .wv-bar:nth-child(10){height:30px;animation-delay:0.9s}
+  @keyframes wave {
+    0%,100%{transform:scaleY(1);opacity:0.6}
+    50%{transform:scaleY(1.4);opacity:1}
+  }
+
+  .info-chip {
+    background: var(--lila-ghost);
+    border: 1px solid var(--lila-pale);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.73rem;
+    color: var(--ink-mid);
+    line-height: 1.5;
+    text-align: left;
+  }
+  .info-chip strong { color: var(--lila-deep); }
+
+  /* ════════════════════════════════
+     SCREEN 4 — RESULTADO
+  ════════════════════════════════ */
+  .result-hero {
+    background: linear-gradient(160deg, var(--lila-ghost), white);
+    padding: 28px 22px 20px;
+    text-align: center;
+  }
+  .result-icon { font-size: 3.2rem; margin-bottom: 10px; }
+  .result-hero h3 {
+    font-family: 'Lora', serif;
+    font-size: 1.3rem;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .result-hero p { font-size: 0.78rem; color: var(--ink-mid); opacity: 0.6; }
+
+  .scores-wrap { padding: 0 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .sc-card {
+    background: white;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r-sm);
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .sc-name { font-size: 0.62rem; font-weight: 700; opacity: 0.45; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .sc-num {
+    font-family: 'Lora', serif;
+    font-size: 1.9rem;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .sc-tag { font-size: 0.65rem; font-weight: 700; }
+
+  .result-msg {
+    margin: 14px 16px;
+    background: linear-gradient(135deg, var(--lila-ghost), var(--lila-pale));
+    border-radius: var(--r-sm);
+    border-left: 3px solid var(--lila-deep);
+    padding: 14px 16px;
+    font-size: 0.8rem;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+  .result-actions { padding: 0 16px 20px; display: flex; flex-direction: column; gap: 9px; }
+  .btn-outline {
+    width: 100%; padding: 12px;
+    background: transparent;
+    border: 1.5px solid var(--lila-mid);
+    border-radius: var(--r-sm);
+    color: var(--lila-deep);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-outline:hover { background: var(--lila-ghost); }
+
+  /* ════════════════════════════════
+     SCREEN 5 — ESTADO DE ÁNIMO
+  ════════════════════════════════ */
+  .mood-header {
+    background: linear-gradient(135deg, var(--lila-pale), var(--lila-ghost));
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--lila-mid);
+  }
+  .mood-header h3 { font-family:'Lora',serif; font-size:1.15rem; color:var(--ink); font-weight:600; }
+  .mood-body { padding: 14px 16px; }
+
+  .today-card {
+    background: white;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r);
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 16px rgba(169,143,212,0.08);
+  }
+  .today-label { font-size: 0.78rem; font-weight: 700; color: var(--ink); margin-bottom: 14px; }
+  .mood-scale-row { display: flex; gap: 7px; margin-bottom: 14px; }
+  .ms-opt {
+    flex: 1; aspect-ratio: 1;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px; cursor: pointer;
+    transition: all 0.15s;
+    font-size: 1.3rem;
+  }
+  .ms-opt span { font-size: 0.56rem; color: var(--ink-mid); opacity: 0.55; font-weight: 600; }
+  .ms-opt.s1{background:#FDDEDE} .ms-opt.s2{background:#FDE8D4}
+  .ms-opt.s3{background:#FDF6D4} .ms-opt.s4{background:#D4F0DD} .ms-opt.s5{background:#C8EDD8}
+  .ms-opt.selected { border-color: var(--lila-deep); transform: scale(1.1); box-shadow: 0 4px 12px rgba(169,143,212,0.3); }
+
+  .note-area {
+    width: 100%; height: 62px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem;
+    color: var(--ink);
+    background: var(--lila-ghost);
+    resize: none; outline: none;
+  }
+
+  .week-card {
+    background: white;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r-sm);
+    padding: 16px;
+  }
+  .week-bars-row { display: flex; align-items: flex-end; gap: 7px; height: 72px; margin-bottom: 8px; }
+  .wb-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+  .wb { width: 100%; border-radius: 7px 7px 0 0; background: var(--lila-mid); }
+  .wb.today { background: var(--lila-deep); }
+  .wd { font-size: 0.62rem; color: var(--ink-mid); opacity: 0.45; font-weight: 700; }
+
+  /* ════════════════════════════════
+     SCREEN 6 — AGENDAR
+  ════════════════════════════════ */
+  .sched-header {
+    background: linear-gradient(135deg, var(--lila-pale), var(--lila-ghost));
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--lila-mid);
+  }
+  .sched-header h3 { font-family:'Lora',serif; font-size:1.15rem; color:var(--ink); font-weight:600; }
+  .sched-header p { font-size: 0.75rem; color: var(--ink-mid); opacity: 0.6; margin-top: 3px; }
+  .sched-body { padding: 14px 16px; }
+
+  .psych-tile {
+    background: white;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r);
+    padding: 14px;
+    display: flex; gap: 12px; align-items: flex-start;
+    margin-bottom: 10px; cursor: pointer;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .psych-tile:hover, .psych-tile.sel { border-color: var(--lila-deep); box-shadow: 0 4px 16px rgba(169,143,212,0.2); }
+  .psych-tile.sel { background: var(--lila-ghost); }
+  .p-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0;
+  }
+  .pa1{background:var(--lila-pale)} .pa2{background:var(--sage-pale)}
+  .p-name { font-size: 0.88rem; font-weight: 700; color: var(--ink); }
+  .p-spec { font-size: 0.72rem; color: var(--ink-mid); opacity: 0.6; margin: 2px 0 7px; }
+  .p-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .tag {
+    padding: 3px 9px;
+    border-radius: 50px;
+    background: var(--lila-pale);
+    font-size: 0.64rem;
+    color: var(--lila-deep);
+    font-weight: 700;
+  }
+  .avail-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); margin-top: 5px; flex-shrink: 0; }
+
+  .slots-title { font-size: 0.76rem; font-weight: 700; color: var(--ink); margin-bottom: 9px; }
+  .slots-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+  .slot {
+    padding: 10px 6px; text-align: center;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: 10px;
+    background: var(--lila-ghost);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.78rem; font-weight: 600;
+    color: var(--ink); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .slot:hover, .slot.sel { border-color: var(--lila-deep); background: var(--lila-pale); color: var(--lila-deep); }
+  .slot.taken { opacity: 0.3; cursor: default; text-decoration: line-through; }
+
+  .confirm-chip {
+    background: var(--lila-ghost);
+    border: 1.5px solid var(--lila-pale);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.77rem;
+    color: var(--ink-mid);
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  .confirm-chip strong { color: var(--ink); }
+
+  /* ════════════════════════════════
+     SCREEN 7 — CHAT
+  ════════════════════════════════ */
+  .chat-head {
+    background: linear-gradient(135deg, var(--lila-deep), var(--ink));
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px;
+    color: white;
+  }
+  .chat-av {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+  }
+  .chat-pname { font-size: 0.88rem; font-weight: 700; }
+  .chat-status { font-size: 0.68rem; opacity: 0.72; display: flex; align-items: center; gap: 4px; }
+  .online { width: 6px; height: 6px; border-radius: 50%; background: #A8E6B8; }
+
+  .chat-msgs {
+    flex: 1; padding: 14px 14px;
+    background: var(--lila-ghost);
+    display: flex; flex-direction: column; gap: 9px;
+    overflow-y: auto;
+  }
+  .sys-msg {
+    align-self: center;
+    font-size: 0.68rem; color: var(--ink-mid); opacity: 0.5;
+    background: white; padding: 4px 12px;
+    border-radius: 50px;
+    border: 1px solid var(--lila-pale);
+  }
+  .msg { max-width: 80%; display: flex; flex-direction: column; gap: 2px; }
+  .msg.recv { align-self: flex-start; }
+  .msg.sent { align-self: flex-end; align-items: flex-end; }
+  .bubble {
+    padding: 10px 14px; border-radius: 16px;
+    font-size: 0.81rem; line-height: 1.5;
+  }
+  .recv .bubble {
+    background: white; color: var(--ink);
+    border: 1px solid var(--lila-pale);
+    border-bottom-left-radius: 4px;
+  }
+  .sent .bubble {
+    background: linear-gradient(135deg, var(--lila-deep), #8A6BC4);
+    color: white;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-t { font-size: 0.6rem; color: var(--ink-mid); opacity: 0.4; }
+
+  .chat-input-row {
+    padding: 10px 14px 18px;
+    display: flex; gap: 8px; align-items: center;
+    border-top: 1px solid var(--lila-pale);
+    background: white;
+  }
+  .chat-in {
+    flex: 1; padding: 10px 16px;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.83rem; outline: none;
+    background: var(--lila-ghost);
+  }
+  .send-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--lila-deep), #8A6BC4);
+    border: none; color: white; font-size: 0.95rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(169,143,212,0.4);
+  }
+
+  /* ════════════════════════════════
+     SCREEN 8 — PANEL PSICÓLOGO
+  ════════════════════════════════ */
+  .psych-head {
+    background: linear-gradient(135deg, var(--ink) 0%, #3D2B6B 100%);
+    padding: 18px 22px;
+    color: white;
+  }
+  .psych-role {
+    font-size: 0.66rem; font-weight: 700; letter-spacing: 1px;
+    background: rgba(255,255,255,0.14);
+    padding: 3px 10px; border-radius: 50px;
+    display: inline-block; margin-bottom: 7px;
+  }
+  .psych-head h3 { font-family:'Lora',serif; font-size:1.25rem; font-weight:600; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; padding: 14px 16px 0; }
+  .stat-box {
+    background: white; border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r-sm); padding: 12px 10px; text-align: center;
+  }
+  .stat-n { font-family:'Lora',serif; font-size:1.7rem; color: var(--ink); line-height:1; }
+  .stat-l { font-size: 0.62rem; color: var(--ink-mid); opacity: 0.5; margin-top: 3px; font-weight:700; }
+
+  .crisis-bar {
+    margin: 12px 16px 0;
+    background: linear-gradient(135deg, #FDEAEA, #FAD4D4);
+    border: 1.5px solid #F5B8B8;
+    border-radius: var(--r-sm);
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .crisis-t { font-size: 0.78rem; font-weight: 700; color: #A33030; }
+  .crisis-s { font-size: 0.7rem; color: #C04040; margin-top: 1px; }
+
+  .patient-list { padding: 12px 16px 0; }
+  .pt-item {
+    background: white; border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r-sm); padding: 13px;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 11px;
+  }
+  .pt-av {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--lila-pale);
+    display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+  }
+  .pt-name { font-size: 0.83rem; font-weight: 700; color: var(--ink); }
+  .pt-meta { font-size: 0.7rem; color: var(--ink-mid); opacity: 0.55; margin-top: 1px; }
+  .risk-pill { padding: 4px 10px; border-radius: 50px; font-size: 0.67rem; font-weight: 700; }
+  .rp-l{background:#E6F5EB;color:#2E7D4F}
+  .rp-m{background:#FFF3CC;color:#7A5C00}
+  .rp-h{background:#FDEAEA;color:#A33030}
+
+  /* ── BOTTOM NAV ── */
+  .bnav {
+    display: flex;
+    border-top: 1px solid var(--lila-pale);
+    background: white;
+  }
+  .bn-item {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 9px 4px;
+    gap: 3px; cursor: pointer;
+    border: none; background: none;
+    transition: all 0.15s;
+  }
+  .bn-icon { font-size: 1.15rem; }
+  .bn-label { font-size: 0.56rem; font-family:'Nunito',sans-serif; color: var(--ink-mid); opacity: 0.4; font-weight: 700; }
+  .bn-item.active .bn-label { color: var(--lila-deep); opacity: 1; }
+
+  /* ════════════════════════════════
+     SCREEN 9 — CHATBOT PHQ/GAD
+  ════════════════════════════════ */
+  .bot-head {
+    background: linear-gradient(135deg, var(--sage) 0%, #4E7A60 100%);
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .bot-av {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.22);
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .bot-pname { font-size: 0.88rem; font-weight: 700; }
+  .bot-status { font-size: 0.68rem; opacity: 0.78; display: flex; align-items: center; gap: 4px; }
+  .bot-dot { width: 6px; height: 6px; border-radius: 50%; background: #C8EDD8; animation: blink 1.8s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* Barra de progreso del cuestionario */
+  .bot-progress {
+    background: white;
+    border-bottom: 1px solid var(--lila-pale);
+    padding: 10px 18px;
+    flex-shrink: 0;
+  }
+  .bot-prog-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+  }
+  .bot-prog-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--ink-mid);
+  }
+  .bot-prog-step {
+    font-size: 0.68rem;
+    color: var(--ink-mid);
+    opacity: 0.5;
+    font-weight: 600;
+  }
+  .bot-prog-track {
+    height: 6px;
+    background: var(--lila-pale);
+    border-radius: 50px;
+    overflow: hidden;
+    display: flex;
+    gap: 3px;
+  }
+  .bot-prog-seg {
+    flex: 1;
+    border-radius: 50px;
+    background: var(--lila-pale);
+    transition: background 0.3s;
+  }
+  .bot-prog-seg.done { background: var(--lila-deep); }
+  .bot-prog-seg.active { background: var(--lila-mid); }
+  .bot-prog-seg.phq.done { background: var(--lila-deep); }
+  .bot-prog-seg.gad.done { background: var(--sage); }
+  .bot-prog-seg.gad.active { background: var(--sage-light); }
+
+  /* Sección de cuestionario activo */
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 11px;
+    border-radius: 50px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .badge-phq { background: var(--lila-pale); color: var(--lila-deep); }
+  .badge-gad { background: var(--sage-pale); color: var(--sage); }
+
+  /* Mensajes del chatbot */
+  .bot-msgs {
+    flex: 1;
+    padding: 14px;
+    background: var(--lila-ghost);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+  }
+  .bot-sys-msg {
+    align-self: center;
+    font-size: 0.66rem;
+    color: var(--ink-mid);
+    opacity: 0.5;
+    background: white;
+    padding: 4px 12px;
+    border-radius: 50px;
+    border: 1px solid var(--lila-pale);
+  }
+
+  /* Burbuja del bot */
+  .bot-recv { align-self: flex-start; max-width: 88%; display: flex; flex-direction: column; gap: 3px; }
+  .bot-sent { align-self: flex-end; max-width: 78%; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+
+  .bot-bubble-recv {
+    background: white;
+    color: var(--ink);
+    border: 1px solid var(--lila-pale);
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    padding: 10px 14px;
+    font-size: 0.81rem;
+    line-height: 1.55;
+  }
+  .bot-bubble-sent {
+    background: linear-gradient(135deg, var(--lila-deep), #8A6BC4);
+    color: white;
+    border-radius: 16px;
+    border-bottom-right-radius: 4px;
+    padding: 10px 14px;
+    font-size: 0.81rem;
+    line-height: 1.55;
+  }
+  .bot-t { font-size: 0.6rem; color: var(--ink-mid); opacity: 0.4; }
+
+  /* Opciones de respuesta tipo botón */
+  .answer-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 2px;
+    max-width: 88%;
+    align-self: flex-start;
+  }
+  .answer-opt {
+    background: white;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .answer-opt:hover { border-color: var(--lila-deep); background: var(--lila-ghost); color: var(--lila-deep); }
+  .answer-opt.selected {
+    border-color: var(--lila-deep);
+    background: var(--lila-pale);
+    color: var(--lila-deep);
+  }
+  .answer-opt.selected-gad {
+    border-color: var(--sage);
+    background: var(--sage-pale);
+    color: var(--sage);
+  }
+  .opt-score {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--lila-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--lila-deep);
+    flex-shrink: 0;
+  }
+  .answer-opt.selected .opt-score { background: var(--lila-deep); color: white; }
+  .opt-score-gad { background: var(--sage-pale); color: var(--sage); }
+  .answer-opt.selected-gad .opt-score-gad { background: var(--sage); color: white; }
+
+  /* Separador de sección */
+  .section-sep {
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+  }
+  .sep-line { width: 40px; height: 1px; background: var(--lila-mid); opacity: 0.5; }
+  .sep-badge {
+    padding: 4px 14px;
+    border-radius: 50px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border: 1px solid;
+  }
+  .sep-phq { background: var(--lila-ghost); border-color: var(--lila-mid); color: var(--lila-deep); }
+  .sep-gad { background: var(--sage-pale); border-color: var(--sage-light); color: var(--sage); }
+
+  /* Tipeo animado */
+  .typing-indicator {
+    align-self: flex-start;
+    background: white;
+    border: 1px solid var(--lila-pale);
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    padding: 12px 16px;
+    display: flex; gap: 4px; align-items: center;
+  }
+  .typing-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--lila-mid);
+    animation: typing 1.4s ease-in-out infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%,80%,100%{transform:scale(1);opacity:0.5}
+    40%{transform:scale(1.3);opacity:1}
+  }
+
+  /* Resumen de sección completada */
+  .section-summary {
+    background: white;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r-sm);
+    padding: 12px 14px;
+    align-self: flex-start;
+    max-width: 90%;
+  }
+  .sum-title { font-size: 0.72rem; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .sum-score-row { display: flex; align-items: center; gap: 10px; }
+  .sum-num {
+    font-family: 'Lora', serif;
+    font-size: 1.6rem;
+    color: var(--mid-color);
+    line-height: 1;
+  }
+  .sum-num.low { color: var(--low-color); }
+  .sum-tag { font-size: 0.7rem; color: var(--ink-mid); line-height: 1.4; }
+
+  /* Input deshabilitado mientras se responden opciones */
+  .bot-input-row {
+    padding: 10px 14px 18px;
+    display: flex; gap: 8px; align-items: center;
+    border-top: 1px solid var(--lila-pale);
+    background: white;
+    flex-shrink: 0;
+  }
+  .bot-in {
+    flex: 1; padding: 10px 16px;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.83rem; outline: none;
+    background: var(--lila-ghost);
+    color: var(--ink-mid);
+  }
+  .bot-in:disabled { opacity: 0.5; cursor: not-allowed; }
+  .bot-hint {
+    font-size: 0.68rem; color: var(--ink-mid); opacity: 0.5;
+    text-align: center;
+    padding: 0 14px 6px;
+    background: white;
+    flex-shrink: 0;
+  }
+
+  /* ════════════════════════════════
+     SCREEN 10 — HISTORIAL PACIENTE (PSICÓLOGO)
+  ════════════════════════════════ */
+  .hist-head {
+    background: linear-gradient(135deg, var(--ink) 0%, #3D2B6B 100%);
+    padding: 14px 18px 16px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .hist-back {
+    font-size: 0.7rem; opacity: 0.65; font-weight: 600;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 5px; cursor: pointer;
+  }
+  .hist-patient-row {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hist-av {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(255,255,255,0.16);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .hist-pname { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; line-height: 1.2; }
+  .hist-pmeta { font-size: 0.7rem; opacity: 0.65; margin-top: 2px; }
+  .hist-risk {
+    margin-left: auto;
+    padding: 4px 11px; border-radius: 50px;
+    font-size: 0.68rem; font-weight: 700;
+  }
+  .hist-risk-m { background: rgba(196,150,90,0.28); color: #FFD98A; border: 1px solid rgba(196,150,90,0.4); }
+
+  /* Tabs */
+  .hist-tabs {
+    display: flex; background: white;
+    border-bottom: 1px solid var(--lila-pale);
+    flex-shrink: 0;
+  }
+  .h-tab {
+    flex: 1; padding: 10px 4px;
+    font-size: 0.65rem; font-weight: 700;
+    color: var(--ink-mid); opacity: 0.45;
+    border: none; background: none; cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .h-tab .t-ico { font-size: 1rem; }
+  .h-tab.active { color: var(--lila-deep); opacity: 1; border-bottom-color: var(--lila-deep); }
+
+  /* Cuerpo con scroll */
+  .hist-body {
+    flex: 1; overflow-y: auto;
+    background: var(--lila-ghost);
+    padding: 14px 14px 20px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .hist-panel { display: none; flex-direction: column; gap: 12px; }
+  .hist-panel.active { display: flex; }
+
+  /* ── Tarjeta base reutilizable ── */
+  .h-card {
+    background: white;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r-sm);
+    padding: 14px;
+  }
+  .h-card-title {
+    font-size: 0.72rem; font-weight: 800;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--ink-mid); opacity: 0.5;
+    margin-bottom: 10px;
+  }
+
+  /* ── HRV sparkline ── */
+  .hrv-sparkline {
+    width: 100%; height: 56px;
+    display: flex; align-items: flex-end; gap: 4px;
+  }
+  .sp-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .sp-bar {
+    width: 100%; border-radius: 4px 4px 0 0;
+    transition: opacity 0.2s;
+  }
+  .sp-bar.sp-low  { background: var(--high-color); opacity: 0.75; }
+  .sp-bar.sp-mid  { background: var(--mid-color);  opacity: 0.8; }
+  .sp-bar.sp-ok   { background: var(--lila-mid);   opacity: 0.9; }
+  .sp-bar.sp-good { background: var(--lila-deep); }
+  .sp-bar.sp-now  { background: var(--lila-deep); box-shadow: 0 0 0 2px rgba(169,143,212,0.35); }
+  .sp-lbl { font-size: 0.55rem; color: var(--ink-mid); opacity: 0.4; font-weight: 700; }
+  .sp-val { font-size: 0.58rem; color: var(--ink-mid); opacity: 0.55; font-weight: 700; }
+
+  .hrv-stats-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px; margin-top: 10px;
+  }
+  .hrv-stat {
+    background: var(--lila-ghost);
+    border-radius: 10px; padding: 8px 6px; text-align: center;
+  }
+  .hrv-stat-n {
+    font-family: 'Lora', serif; font-size: 1.15rem;
+    color: var(--lila-deep); line-height: 1;
+  }
+  .hrv-stat-l { font-size: 0.6rem; color: var(--ink-mid); opacity: 0.5; font-weight: 700; margin-top: 2px; }
+
+  /* ── Gráfica PHQ/GAD líneas ── */
+  .score-chart-wrap { position: relative; width: 100%; height: 80px; }
+  .score-legend {
+    display: flex; gap: 12px; margin-bottom: 6px;
+  }
+  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; font-weight: 700; }
+  .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .leg-phq { background: var(--lila-deep); }
+  .leg-gad { background: var(--sage); }
+
+  .score-bars-wrap {
+    display: flex; align-items: flex-end; gap: 5px; height: 70px;
+  }
+  .sc-group { flex: 1; display: flex; gap: 2px; align-items: flex-end; }
+  .sc-b { flex: 1; border-radius: 3px 3px 0 0; min-width: 0; }
+  .sc-b.phq { background: var(--lila-mid); }
+  .sc-b.phq.hi { background: var(--lila-deep); }
+  .sc-b.gad { background: var(--sage-light); }
+  .sc-b.gad.hi { background: var(--sage); }
+  .sc-date { font-size: 0.55rem; color: var(--ink-mid); opacity: 0.4; font-weight: 700; text-align: center; margin-top: 4px; }
+
+  /* Tabla histórica de puntajes */
+  .scores-table { width: 100%; border-collapse: collapse; }
+  .scores-table th {
+    font-size: 0.62rem; font-weight: 800; letter-spacing: 0.6px;
+    text-transform: uppercase; color: var(--ink-mid); opacity: 0.45;
+    padding: 0 0 6px; text-align: left;
+  }
+  .scores-table th:not(:first-child) { text-align: center; }
+  .scores-table td {
+    font-size: 0.75rem; color: var(--ink);
+    padding: 7px 0; border-top: 1px solid var(--lila-pale);
+  }
+  .scores-table td:not(:first-child) { text-align: center; font-family: 'Lora', serif; font-size: 0.9rem; }
+  .pill-sm {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 50px; font-size: 0.62rem; font-weight: 700;
+  }
+  .pill-low  { background: #E6F5EB; color: #2E7D4F; }
+  .pill-mid  { background: #FFF3CC; color: #7A5C00; }
+  .pill-high { background: #FDEAEA; color: #A33030; }
+
+  /* ── Síntomas chatbot ── */
+  .sym-entry {
+    background: white;
+    border: 1.5px solid var(--lila-pale);
+    border-radius: var(--r-sm);
+    padding: 12px 14px;
+  }
+  .sym-date-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .sym-date { font-size: 0.7rem; font-weight: 700; color: var(--ink-mid); opacity: 0.6; }
+  .sym-source {
+    font-size: 0.62rem; font-weight: 700; padding: 2px 8px;
+    border-radius: 50px; background: var(--sage-pale); color: var(--sage);
+  }
+  .sym-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .sym-tag {
+    padding: 3px 10px; border-radius: 50px;
+    font-size: 0.68rem; font-weight: 700;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .st-sleep  { background: #EAE0F8; color: #6A4FB0; }
+  .st-energy { background: #FFF0D6; color: #9A6200; }
+  .st-focus  { background: #E0EEF8; color: #2A6090; }
+  .st-mood   { background: #FDDEDE; color: #9A2020; }
+  .st-social { background: #E6F5EB; color: #2E7D4F; }
+  .st-appetite { background: #FDE8D4; color: #904020; }
+  .st-pain   { background: #F8E0E0; color: #8A2020; }
+  .st-ok     { background: var(--sage-pale); color: var(--sage); }
+  .sym-note {
+    font-size: 0.73rem; color: var(--ink-mid); opacity: 0.7;
+    line-height: 1.5; border-top: 1px solid var(--lila-pale); padding-top: 7px;
+    font-style: italic;
+  }
+
+  /* Nota del psicólogo */
+  .psych-note-box {
+    background: linear-gradient(135deg, var(--lila-ghost), var(--lila-pale));
+    border-left: 3px solid var(--lila-deep);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    padding: 10px 12px;
+    font-size: 0.75rem; color: var(--ink-mid); line-height: 1.55;
+  }
+  .psych-note-box strong { color: var(--ink); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    max-width: 375px; text-align: center;
+    font-size: 0.7rem; color: var(--ink-mid); opacity: 0.5; line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="logo-row">
+    <img class="logo-img" src="/mnt/user-data/uploads/1773380532967_image.png" alt="EmotIA logo" onerror="this.style.display='none'">
+    <h1>Emot<span>IA</span></h1>
+  </div>
+  <p>Prototipo de pantallas</p>
+</div>
+
+<nav class="screen-nav">
+  <button class="nav-btn active" onclick="show('login',this)">1. Inicio de sesión</button>
+  <button class="nav-btn" onclick="show('dash',this)">2. Dashboard</button>
+  <button class="nav-btn" onclick="show('hrv',this)">3. Medición HRV</button>
+  <button class="nav-btn" onclick="show('result',this)">4. Resultado</button>
+  <button class="nav-btn" onclick="show('mood',this)">5. Estado de ánimo</button>
+  <button class="nav-btn" onclick="show('sched',this)">6. Agendar cita</button>
+  <button class="nav-btn" onclick="show('chat',this)">7. Chat con psicólogo</button>
+  <button class="nav-btn" onclick="show('psych',this)">8. Panel del psicólogo</button>
+  <button class="nav-btn" onclick="show('boteval',this)">9. Evaluación PHQ/GAD</button>
+  <button class="nav-btn" onclick="show('historial',this)">10. Historial del paciente</button>
+</nav>
+
+<!-- ══════════════ 1. LOGIN ══════════════ -->
+<div class="phone active" id="phone-login">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="login-hero">
+      <h2>EmotIA</h2>
+      <p class="tagline">Tu espacio de bienestar emocional. Gratuito y privado.</p>
+      <span class="free-badge">✦ ACCESO 100% GRATUITO</span>
+    </div>
+    <div class="login-form">
+      <div>
+        <label class="form-label">Correo electrónico</label>
+        <input class="form-input" type="email" placeholder="tu@correo.com">
+      </div>
+      <div>
+        <label class="form-label">Contraseña</label>
+        <input class="form-input" type="password" placeholder="••••••••">
+      </div>
+      <button class="btn-primary">Entrar a EmotIA</button>
+      <p class="login-links">¿Primera vez? <a href="#">Crear cuenta gratis</a></p>
+      <p class="login-links"><a href="#">Olvidé mi contraseña</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 2. DASHBOARD ══════════════ -->
+<div class="phone" id="phone-dash">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+  <div class="screen">
+    <div class="dash-top">
+      <p class="dash-greeting">Hola de nuevo,</p>
+      <h2 class="dash-name">Valeria 👋</h2>
+      <span class="dash-date">Jueves 12 de marzo, 2026</span>
+    </div>
+    <div class="dash-body">
+      <p class="sec-label">Tu bienestar hoy</p>
+      <div class="hrv-card">
+        <div class="hrv-ring">
+          <div class="hrv-inner">
+            <span class="hrv-num">58</span>
+            <span class="hrv-unit">ms HRV</span>
+          </div>
+        </div>
+        <div class="hrv-info">
+          <div class="hrv-title">Variabilidad Cardíaca</div>
+          <div class="hrv-sub">Medida esta mañana con tu reloj inteligente</div>
+          <span class="hrv-badge">✅ Rango normal</span>
+        </div>
+      </div>
+
+      <div class="mood-strip">
+        <span class="mood-strip-label">¿Cómo te sientes?</span>
+        <div class="mood-emojis">
+          <div class="m-dot e1">😔</div>
+          <div class="m-dot e2">😕</div>
+          <div class="m-dot e3">😐</div>
+          <div class="m-dot e4">🙂</div>
+          <div class="m-dot e5">😊</div>
+        </div>
+      </div>
+
+      <p class="sec-label">Accesos rápidos</p>
+      <div class="quick-grid">
+        <div class="q-tile">
+          <div class="ti">📱</div>
+          <div class="tl">Medir HRV</div>
+          <div class="ts">Sincronización automática</div>
+        </div>
+        <div class="q-tile">
+          <div class="ti">📋</div>
+          <div class="tl">Evaluación PHQ/GAD</div>
+          <div class="ts">5 minutos</div>
+        </div>
+        <div class="q-tile">
+          <div class="ti">📅</div>
+          <div class="tl">Agendar cita</div>
+          <div class="ts">2 disponibles</div>
+        </div>
+        <div class="q-tile">
+          <div class="ti">📈</div>
+          <div class="tl">Mi historial</div>
+          <div class="ts">Últimas 4 semanas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bnav">
+    <button class="bn-item active"><span class="bn-icon">🏠</span><span class="bn-label">Inicio</span></button>
+    <button class="bn-item"><span class="bn-icon">📱</span><span class="bn-label">HRV</span></button>
+    <button class="bn-item"><span class="bn-icon">📅</span><span class="bn-label">Citas</span></button>
+    <button class="bn-item"><span class="bn-icon">💬</span><span class="bn-label">Chat</span></button>
+    <button class="bn-item"><span class="bn-icon">👤</span><span class="bn-label">Perfil</span></button>
+  </div>
+</div>
+
+<!-- ══════════════ 3. MEDICIÓN HRV ══════════════ -->
+<div class="phone" id="phone-hrv">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+  <div class="screen">
+    <div class="eval-header">
+      <h3>Medición de bienestar</h3>
+      <p>HRV con reloj inteligente · PHQ-9 · GAD-7 · Síntomas físicos</p>
+    </div>
+    <div style="padding:14px 16px;flex:1">
+      <div class="hrv-measure-card">
+        <div class="finger-anim">⌚</div>
+        <div class="hrv-step-title">Conecta tu reloj inteligente</div>
+        <div class="hrv-step-desc">
+          Sincroniza tu reloj inteligente para obtener tu HRV automáticamente. Asegúrate de que esté conectado y con datos recientes de frecuencia cardíaca.
+        </div>
+        <div class="hrv-waveform">
+          <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+          <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+          <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+          <div class="wv-bar"></div>
+        </div>
+        <div class="hrv-progress-wrap">
+          <div class="hrv-prog-labels"><span>Sincronizando datos...</span><span>Conectando</span></div>
+          <div class="hrv-prog-bar"><div class="hrv-prog-fill"></div></div>
+        </div>
+        <div class="info-chip">
+          💡 La <strong>HRV (Variabilidad de la Frecuencia Cardíaca)</strong> refleja el estado de tu sistema nervioso. Una HRV baja sostenida puede indicar estrés crónico y mayor riesgo para tu salud física.
+        </div>
+      </div>
+
+      <div style="background:white;border:1.5px solid var(--lila-pale);border-radius:var(--r-sm);padding:14px 16px;margin-top:10px">
+        <div style="font-size:0.76rem;font-weight:700;color:var(--ink);margin-bottom:10px">Después de la medición HRV completarás:</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.76rem;color:var(--ink-mid)"><span style="background:var(--lila-pale);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;color:var(--lila-deep);flex-shrink:0">2</span>Cuestionario PHQ-9 (depresión · 9 preguntas)</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.76rem;color:var(--ink-mid)"><span style="background:var(--lila-pale);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;color:var(--lila-deep);flex-shrink:0">3</span>Cuestionario GAD-7 (ansiedad · 7 preguntas)</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.76rem;color:var(--ink-mid)"><span style="background:var(--sage-pale);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;color:var(--sage);flex-shrink:0">4</span>Registro de síntomas físicos (sueño, dolor, concentración)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bnav">
+    <button class="bn-item"><span class="bn-icon">🏠</span><span class="bn-label">Inicio</span></button>
+    <button class="bn-item active"><span class="bn-icon">📱</span><span class="bn-label">HRV</span></button>
+    <button class="bn-item"><span class="bn-icon">📅</span><span class="bn-label">Citas</span></button>
+    <button class="bn-item"><span class="bn-icon">💬</span><span class="bn-label">Chat</span></button>
+    <button class="bn-item"><span class="bn-icon">👤</span><span class="bn-label">Perfil</span></button>
+  </div>
+</div>
+
+<!-- ══════════════ 4. RESULTADO ══════════════ -->
+<div class="phone" id="phone-result">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+  <div class="screen">
+    <div class="result-hero">
+      <div class="result-icon">🌱</div>
+      <h3>Tu perfil de bienestar</h3>
+      <p>Evaluación del 12 de marzo · 3 indicadores</p>
+    </div>
+    <div class="scores-wrap">
+      <div class="sc-card">
+        <div class="sc-name">HRV</div>
+        <div class="sc-num" style="color:var(--lila-deep)">58<span style="font-size:0.8rem">ms</span></div>
+        <span class="sc-tag" style="color:var(--low-color)">✅ Normal</span>
+      </div>
+      <div class="sc-card">
+        <div class="sc-name">PHQ-9</div>
+        <div class="sc-num" style="color:var(--mid-color)">10</div>
+        <span class="sc-tag" style="color:var(--mid-color)">⚠️ Moderado</span>
+      </div>
+      <div class="sc-card">
+        <div class="sc-name">GAD-7</div>
+        <div class="sc-num" style="color:var(--low-color)">5</div>
+        <span class="sc-tag" style="color:var(--low-color)">✅ Leve</span>
+      </div>
+    </div>
+    <div class="result-msg">
+      Tu HRV está en rango normal hoy, pero tus puntajes indican <strong>síntomas moderados de depresión</strong>. Esto es más común de lo que crees entre estudiantes de ingeniería. Te recomendamos agendar una sesión con un psicólogo del ITVER, de forma completamente gratuita.
+    </div>
+    <div class="result-actions">
+      <button class="btn-primary">📅 Agendar cita con psicólogo</button>
+      <button class="btn-outline">📊 Ver interpretación detallada</button>
+      <button class="btn-outline">🔄 Repetir evaluación</button>
+    </div>
+    <p style="text-align:center;font-size:0.65rem;color:var(--ink-mid);opacity:0.4;padding:6px 20px 16px;line-height:1.5">Estos resultados son orientativos. Solo un profesional puede diagnosticar.</p>
+  </div>
+  <div class="bnav">
+    <button class="bn-item"><span class="bn-icon">🏠</span><span class="bn-label">Inicio</span></button>
+    <button class="bn-item active"><span class="bn-icon">📱</span><span class="bn-label">HRV</span></button>
+    <button class="bn-item"><span class="bn-icon">📅</span><span class="bn-label">Citas</span></button>
+    <button class="bn-item"><span class="bn-icon">💬</span><span class="bn-label">Chat</span></button>
+    <button class="bn-item"><span class="bn-icon">👤</span><span class="bn-label">Perfil</span></button>
+  </div>
+</div>
+
+<!-- ══════════════ 5. ESTADO DE ÁNIMO ══════════════ -->
+<div class="phone" id="phone-mood">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+  <div class="screen">
+    <div class="mood-header"><h3>Estado de ánimo 📓</h3></div>
+    <div class="mood-body">
+      <div class="today-card">
+        <div class="today-label">¿Cómo te sientes hoy?</div>
+        <div class="mood-scale-row">
+          <div class="ms-opt s1">😔<span>Mal</span></div>
+          <div class="ms-opt s2">😕<span>Bajo</span></div>
+          <div class="ms-opt s3 selected">😐<span>Neutro</span></div>
+          <div class="ms-opt s4">🙂<span>Bien</span></div>
+          <div class="ms-opt s5">😊<span>Muy bien</span></div>
+        </div>
+        <textarea class="note-area" placeholder="¿Quieres añadir una nota? (opcional)"></textarea>
+        <button class="btn-primary" style="margin-top:10px">Guardar registro</button>
+      </div>
+
+      <p class="sec-label">Esta semana</p>
+      <div class="week-card">
+        <div class="week-bars-row">
+          <div class="wb-wrap"><div class="wb" style="height:45%"></div><span class="wd">L</span></div>
+          <div class="wb-wrap"><div class="wb" style="height:62%"></div><span class="wd">Ma</span></div>
+          <div class="wb-wrap"><div class="wb" style="height:32%"></div><span class="wd">Mi</span></div>
+          <div class="wb-wrap"><div class="wb" style="height:74%"></div><span class="wd">J</span></div>
+          <div class="wb-wrap"><div class="wb today" style="height:50%"></div><span class="wd">V</span></div>
+          <div class="wb-wrap"><div class="wb" style="height:18%;opacity:0.25"></div><span class="wd">S</span></div>
+          <div class="wb-wrap"><div class="wb" style="height:18%;opacity:0.25"></div><span class="wd">D</span></div>
+        </div>
+        <p style="font-size:0.68rem;color:var(--ink-mid);opacity:0.45;text-align:center">Barra morada oscura = hoy</p>
+      </div>
+    </div>
+  </div>
+  <div class="bnav">
+    <button class="bn-item active"><span class="bn-icon">🏠</span><span class="bn-label">Inicio</span></button>
+    <button class="bn-item"><span class="bn-icon">📱</span><span class="bn-label">HRV</span></button>
+    <button class="bn-item"><span class="bn-icon">📅</span><span class="bn-label">Citas</span></button>
+    <button class="bn-item"><span class="bn-icon">💬</span><span class="bn-label">Chat</span></button>
+    <button class="bn-item"><span class="bn-icon">👤</span><span class="bn-label">Perfil</span></button>
+  </div>
+</div>
+
+<!-- ══════════════ 6. AGENDAR ══════════════ -->
+<div class="phone" id="phone-sched">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+  <div class="screen">
+    <div class="sched-header">
+      <h3>Agendar cita 📅</h3>
+      <p>Servicio gratuito para estudiantes ITVER</p>
+    </div>
+    <div class="sched-body">
+      <div class="psych-tile sel">
+        <div class="p-avatar pa1">👩‍⚕️</div>
+        <div style="flex:1">
+          <div class="p-name">Dra. Andrea Morales</div>
+          <div class="p-spec">Psic. Clínica · Estrés académico</div>
+          <div class="p-tags">
+            <span class="tag">Ansiedad</span>
+            <span class="tag">Depresión</span>
+            <span class="tag">TCC</span>
+          </div>
+        </div>
+        <div class="avail-dot"></div>
+      </div>
+      <div class="psych-tile">
+        <div class="p-avatar pa2">👨‍⚕️</div>
+        <div style="flex:1">
+          <div class="p-name">Dr. Luis Fernández</div>
+          <div class="p-spec">Psic. Educativo · Bienestar</div>
+          <div class="p-tags">
+            <span class="tag">Autoestima</span>
+            <span class="tag">Estrés</span>
+          </div>
+        </div>
+        <div class="avail-dot"></div>
+      </div>
+
+      <div class="slots-title" style="margin-top:12px">Horarios disponibles — Dra. Morales</div>
+      <div class="slots-grid">
+        <button class="slot taken">08:00</button>
+        <button class="slot">09:00</button>
+        <button class="slot sel">10:00</button>
+        <button class="slot">11:00</button>
+        <button class="slot taken">12:00</button>
+        <button class="slot">14:00</button>
+        <button class="slot">15:00</button>
+        <button class="slot taken">16:00</button>
+        <button class="slot">17:00</button>
+      </div>
+
+      <div class="confirm-chip">
+        📅 <strong>Viernes 13 de marzo · 10:00 AM</strong> — Dra. Morales<br>
+        <span style="opacity:0.65">La sesión será por chat dentro de EmotIA</span>
+      </div>
+      <button class="btn-primary">Confirmar cita</button>
+    </div>
+  </div>
+  <div class="bnav">
+    <button class="bn-item"><span class="bn-icon">🏠</span><span class="bn-label">Inicio</span></button>
+    <button class="bn-item"><span class="bn-icon">📱</span><span class="bn-label">HRV</span></button>
+    <button class="bn-item active"><span class="bn-icon">📅</span><span class="bn-label">Citas</span></button>
+    <button class="bn-item"><span class="bn-icon">💬</span><span class="bn-label">Chat</span></button>
+    <button class="bn-item"><span class="bn-icon">👤</span><span class="bn-label">Perfil</span></button>
+  </div>
+</div>
+
+<!-- ══════════════ 7. CHAT ══════════════ -->
+<div class="phone" id="phone-chat">
+  <div class="notch"></div>
+  <div class="status-bar"><span>10:03</span><span>📶 🔋</span></div>
+  <div class="screen">
+    <div class="chat-head">
+      <div class="chat-av">👩‍⚕️</div>
+      <div style="flex:1">
+        <div class="chat-pname">Dra. Andrea Morales</div>
+        <div class="chat-status"><span class="online"></span>En sesión</div>
+      </div>
+      <span style="font-size:1rem;cursor:pointer;opacity:0.7">ℹ️</span>
+    </div>
+    <div class="chat-msgs">
+      <span class="sys-msg">Sesión iniciada · 10:00 AM · Privada y confidencial</span>
+      <div class="msg recv">
+        <div class="bubble">Hola Valeria, bienvenida. Vi tu evaluación de hoy: tu HRV está bien, pero el PHQ-9 marcó moderado. ¿Cómo te has sentido esta semana?</div>
+        <span class="msg-t">10:01</span>
+      </div>
+      <div class="msg sent">
+        <div class="bubble">Hola doctora. La verdad sí ha sido una semana difícil, los proyectos se acumularon y casi no dormí.</div>
+        <span class="msg-t">10:02</span>
+      </div>
+      <div class="msg recv">
+        <div class="bubble">Eso lo veo también en tu registro de síntomas: reportaste dificultad para concentrarte 4 días esta semana. ¿Cuándo empezaste a sentirte así?</div>
+        <span class="msg-t">10:03</span>
+      </div>
+      <div class="msg sent">
+        <div class="bubble">Creo que desde los parciales, hace como 3 semanas...</div>
+        <span class="msg-t">10:04</span>
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-in" placeholder="Escribe un mensaje...">
+      <button class="send-btn">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 8. PANEL PSICÓLOGO ══════════════ -->
+<div class="phone" id="phone-psych">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+  <div class="screen">
+    <div class="psych-head">
+      <span class="psych-role">PSICÓLOGO · ITVER</span>
+      <h3>Dra. Andrea Morales</h3>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-n">12</div><div class="stat-l">Pacientes</div></div>
+      <div class="stat-box"><div class="stat-n">3</div><div class="stat-l">Citas hoy</div></div>
+      <div class="stat-box"><div class="stat-n" style="color:var(--high-color)">1</div><div class="stat-l">Alertas</div></div>
+    </div>
+    <div class="crisis-bar">
+      <span style="font-size:1.2rem">🚨</span>
+      <div>
+        <div class="crisis-t">Alerta de riesgo alto</div>
+        <div class="crisis-s">Estudiante ID-047 · PHQ-9: 19 · HRV: 28ms · Atención inmediata</div>
+      </div>
+    </div>
+    <div class="patient-list">
+      <p class="sec-label" style="margin:12px 0 8px">Mis pacientes</p>
+      <div class="pt-item">
+        <div class="pt-av">👤</div>
+        <div style="flex:1">
+          <div class="pt-name">Valeria P. · 20 años</div>
+          <div class="pt-meta">Cita hoy 10:00 · HRV: 58ms · PHQ-9: 10 · GAD-7: 5</div>
+        </div>
+        <span class="risk-pill rp-m">Moderado</span>
+      </div>
+      <div class="pt-item">
+        <div class="pt-av">👤</div>
+        <div style="flex:1">
+          <div class="pt-name">Rafael R. · 22 años</div>
+          <div class="pt-meta">Última cita: lunes · HRV: 72ms · PHQ-9: 6</div>
+        </div>
+        <span class="risk-pill rp-l">Leve</span>
+      </div>
+      <div class="pt-item">
+        <div class="pt-av">👤</div>
+        <div style="flex:1">
+          <div class="pt-name">Melanye F. · 21 años</div>
+          <div class="pt-meta">Cita hoy 12:00 · HRV: 34ms · PHQ-9: 14</div>
+        </div>
+        <span class="risk-pill rp-h">Alto</span>
+      </div>
+    </div>
+  </div>
+  <div class="bnav">
+    <button class="bn-item active"><span class="bn-icon">🏠</span><span class="bn-label">Inicio</span></button>
+    <button class="bn-item"><span class="bn-icon">👥</span><span class="bn-label">Pacientes</span></button>
+    <button class="bn-item"><span class="bn-icon">📅</span><span class="bn-label">Agenda</span></button>
+    <button class="bn-item"><span class="bn-icon">💬</span><span class="bn-label">Mensajes</span></button>
+    <button class="bn-item"><span class="bn-icon">📊</span><span class="bn-label">Reportes</span></button>
+  </div>
+</div>
+
+<!-- ══════════════ 9. EVALUACIÓN PHQ-9 / GAD-7 POR CHATBOT ══════════════ -->
+<div class="phone" id="phone-boteval">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:48</span><span>📶 🔋</span></div>
+
+  <!-- Header del bot -->
+  <div class="bot-head">
+    <div class="bot-av">🤖</div>
+    <div style="flex:1">
+      <div class="bot-pname">EmotIA · Evaluación guiada</div>
+      <div class="bot-status"><span class="bot-dot"></span>Respondiendo en tiempo real</div>
+    </div>
+    <span style="font-size:0.72rem;opacity:0.7;font-weight:600">🔒 Privado</span>
+  </div>
+
+  <!-- Barra de progreso -->
+  <div class="bot-progress">
+    <div class="bot-prog-top">
+      <span class="bot-prog-label">PHQ-9 · Depresión</span>
+      <span class="bot-prog-step">Pregunta 3 de 9</span>
+    </div>
+    <!-- 9 segmentos PHQ + 7 segmentos GAD = 16 total -->
+    <div class="bot-prog-track" id="prog-track">
+      <!-- se genera por JS -->
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px">
+      <span style="font-size:0.62rem;color:var(--lila-deep);font-weight:700;opacity:0.8">● PHQ-9</span>
+      <span style="font-size:0.62rem;color:var(--sage);font-weight:700;opacity:0.8">● GAD-7</span>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div class="bot-msgs" id="bot-msgs">
+
+    <span class="bot-sys-msg">Evaluación iniciada · Confidencial · ~5 min</span>
+
+    <!-- Saludo -->
+    <div class="bot-recv">
+      <div class="bot-bubble-recv">
+        ¡Hola Valeria! 👋 Voy a hacerte algunas preguntas sobre cómo te has sentido en las <strong>últimas dos semanas</strong>. No hay respuestas correctas o incorrectas, sé lo más honesta que puedas. 🌿
+      </div>
+      <span class="bot-t">9:48</span>
+    </div>
+    <div class="bot-recv">
+      <div class="bot-bubble-recv">
+        Empezamos con el <strong>PHQ-9</strong>, un cuestionario que evalúa síntomas de depresión. Son 9 preguntas y toma unos 3 minutos.
+      </div>
+    </div>
+
+    <!-- Separador PHQ-9 -->
+    <div class="section-sep">
+      <div class="sep-line"></div>
+      <span class="sep-badge sep-phq">📋 PHQ-9 · Depresión · 9 preguntas</span>
+      <div class="sep-line"></div>
+    </div>
+
+    <!-- Pregunta 1 PHQ (respondida) -->
+    <div class="bot-recv">
+      <div class="bot-bubble-recv">
+        <span class="section-badge badge-phq">PHQ-9 · 1/9</span><br>
+        <strong>¿Con qué frecuencia te has sentido con poco interés o placer en hacer las cosas?</strong>
+      </div>
+      <span class="bot-t">9:48</span>
+    </div>
+    <div class="answer-opts">
+      <button class="answer-opt" disabled>
+        <span class="opt-score">0</span>Para nada
+      </button>
+      <button class="answer-opt selected" disabled>
+        <span class="opt-score">1</span>Varios días
+      </button>
+      <button class="answer-opt" disabled>
+        <span class="opt-score">2</span>Más de la mitad de los días
+      </button>
+      <button class="answer-opt" disabled>
+        <span class="opt-score">3</span>Casi todos los días
+      </button>
+    </div>
+    <div class="bot-sent">
+      <div class="bot-bubble-sent">Varios días</div>
+      <span class="bot-t">9:49</span>
+    </div>
+
+    <!-- Pregunta 2 PHQ (respondida) -->
+    <div class="bot-recv">
+      <div class="bot-bubble-recv">
+        <span class="section-badge badge-phq">PHQ-9 · 2/9</span><br>
+        <strong>¿Te has sentido decaída, deprimida o sin esperanza?</strong>
+      </div>
+      <span class="bot-t">9:49</span>
+    </div>
+    <div class="answer-opts">
+      <button class="answer-opt" disabled><span class="opt-score">0</span>Para nada</button>
+      <button class="answer-opt" disabled><span class="opt-score">1</span>Varios días</button>
+      <button class="answer-opt selected" disabled><span class="opt-score">2</span>Más de la mitad de los días</button>
+      <button class="answer-opt" disabled><span class="opt-score">3</span>Casi todos los días</button>
+    </div>
+    <div class="bot-sent">
+      <div class="bot-bubble-sent">Más de la mitad de los días</div>
+      <span class="bot-t">9:50</span>
+    </div>
+
+    <!-- Pregunta 3 PHQ (ACTIVA) -->
+    <div class="bot-recv">
+      <div class="bot-bubble-recv">
+        <span class="section-badge badge-phq">PHQ-9 · 3/9</span><br>
+        <strong>¿Has tenido dificultad para quedarte dormida, permanecer dormida, o has dormido demasiado?</strong>
+      </div>
+      <span class="bot-t">9:50</span>
+    </div>
+
+    <!-- Opciones activas (la pregunta actual) -->
+    <div class="answer-opts" id="active-opts">
+      <button class="answer-opt" onclick="selectOpt(this, 0)">
+        <span class="opt-score">0</span>Para nada
+      </button>
+      <button class="answer-opt" onclick="selectOpt(this, 1)">
+        <span class="opt-score">1</span>Varios días
+      </button>
+      <button class="answer-opt" onclick="selectOpt(this, 2)">
+        <span class="opt-score">2</span>Más de la mitad de los días
+      </button>
+      <button class="answer-opt" onclick="selectOpt(this, 3)">
+        <span class="opt-score">3</span>Casi todos los días
+      </button>
+    </div>
+
+    <!-- Separador GAD (vista previa más abajo) -->
+    <div class="section-sep" style="margin-top:10px">
+      <div class="sep-line"></div>
+      <span class="sep-badge sep-gad">🌿 GAD-7 · Ansiedad · siguiente</span>
+      <div class="sep-line"></div>
+    </div>
+
+    <!-- Vista previa del GAD-7 -->
+    <div class="bot-recv">
+      <div class="bot-bubble-recv" style="background:var(--sage-pale);border-color:var(--sage-light);">
+        Cuando termines el PHQ-9 continuaremos con el <strong>GAD-7</strong>, un cuestionario de 7 preguntas sobre ansiedad. 🌿 Las respuestas son igual de confidenciales.
+      </div>
+      <span class="bot-t">pendiente</span>
+    </div>
+
+    <!-- Indicador "escribiendo..." -->
+    <div class="typing-indicator" id="typing" style="display:none">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+
+  </div><!-- /bot-msgs -->
+
+  <div class="bot-hint" id="bot-hint">Toca una opción para responder</div>
+  <div class="bot-input-row">
+    <input class="bot-in" placeholder="Las respuestas son por botones 👆" disabled>
+    <button class="send-btn" style="opacity:0.4;cursor:not-allowed">➤</button>
+  </div>
+
+  <div class="bnav">
+    <button class="bn-item"><span class="bn-icon">🏠</span><span class="bn-label">Inicio</span></button>
+    <button class="bn-item active"><span class="bn-icon">📱</span><span class="bn-label">HRV</span></button>
+    <button class="bn-item"><span class="bn-icon">📅</span><span class="bn-label">Citas</span></button>
+    <button class="bn-item"><span class="bn-icon">💬</span><span class="bn-label">Chat</span></button>
+    <button class="bn-item"><span class="bn-icon">👤</span><span class="bn-label">Perfil</span></button>
+  </div>
+</div>
+
+<!-- ══════════════ 10. HISTORIAL PACIENTE (PSICÓLOGO) ══════════════ -->
+<div class="phone" id="phone-historial">
+  <div class="notch"></div>
+  <div class="status-bar"><span>10:15</span><span>📶 🔋</span></div>
+
+  <!-- Header -->
+  <div class="hist-head">
+    <div class="hist-back">← Panel del psicólogo</div>
+    <div class="hist-patient-row">
+      <div class="hist-av">👤</div>
+      <div style="flex:1">
+        <div class="hist-pname">Valeria Pérez</div>
+        <div class="hist-pmeta">20 años · Ing. Sistemas · Sem. 4 · ITVER</div>
+      </div>
+      <span class="hist-risk hist-risk-m">⚠️ Moderado</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="hist-tabs">
+    <button class="h-tab active" onclick="switchTab('hrv',this)">
+      <span class="t-ico">📱</span>HRV
+    </button>
+    <button class="h-tab" onclick="switchTab('scores',this)">
+      <span class="t-ico">📋</span>PHQ/GAD
+    </button>
+    <button class="h-tab" onclick="switchTab('symptoms',this)">
+      <span class="t-ico">💬</span>Síntomas
+    </button>
+  </div>
+
+  <!-- Body scrollable -->
+  <div class="hist-body">
+
+    <!-- ── PANEL HRV ── -->
+    <div class="hist-panel active" id="tab-hrv">
+
+      <div class="h-card">
+        <div class="h-card-title">HRV · Últimas 8 semanas (ms)</div>
+        <!-- Sparkline manual con 8 semanas -->
+        <div class="hrv-sparkline">
+          <!-- S1 → S8, hoy = S8 -->
+          <div class="sp-col">
+            <span class="sp-val">62</span>
+            <div class="sp-bar sp-good" style="height:62%"></div>
+            <span class="sp-lbl">S1</span>
+          </div>
+          <div class="sp-col">
+            <span class="sp-val">54</span>
+            <div class="sp-bar sp-ok" style="height:54%"></div>
+            <span class="sp-lbl">S2</span>
+          </div>
+          <div class="sp-col">
+            <span class="sp-val">48</span>
+            <div class="sp-bar sp-mid" style="height:48%"></div>
+            <span class="sp-lbl">S3</span>
+          </div>
+          <div class="sp-col">
+            <span class="sp-val">44</span>
+            <div class="sp-bar sp-mid" style="height:44%"></div>
+            <span class="sp-lbl">S4</span>
+          </div>
+          <div class="sp-col">
+            <span class="sp-val">38</span>
+            <div class="sp-bar sp-low" style="height:38%"></div>
+            <span class="sp-lbl">S5</span>
+          </div>
+          <div class="sp-col">
+            <span class="sp-val">42</span>
+            <div class="sp-bar sp-mid" style="height:42%"></div>
+            <span class="sp-lbl">S6</span>
+          </div>
+          <div class="sp-col">
+            <span class="sp-val">51</span>
+            <div class="sp-bar sp-ok" style="height:51%"></div>
+            <span class="sp-lbl">S7</span>
+          </div>
+          <div class="sp-col">
+            <span class="sp-val">58</span>
+            <div class="sp-bar sp-now" style="height:58%"></div>
+            <span class="sp-lbl" style="color:var(--lila-deep);opacity:1">Hoy</span>
+          </div>
+        </div>
+        <!-- Línea de referencia -->
+        <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
+          <div style="flex:1;height:1px;background:var(--lila-pale)"></div>
+          <span style="font-size:0.6rem;color:var(--lila-deep);font-weight:700;opacity:0.7">Normal ≥ 50 ms</span>
+          <div style="flex:1;height:1px;background:var(--lila-pale)"></div>
+        </div>
+        <div class="hrv-stats-row">
+          <div class="hrv-stat">
+            <div class="hrv-stat-n">58</div>
+            <div class="hrv-stat-l">Hoy (ms)</div>
+          </div>
+          <div class="hrv-stat">
+            <div class="hrv-stat-n" style="color:var(--mid-color)">49</div>
+            <div class="hrv-stat-l">Promedio</div>
+          </div>
+          <div class="hrv-stat">
+            <div class="hrv-stat-n" style="color:var(--high-color)">38</div>
+            <div class="hrv-stat-l">Mínimo S5</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Observación clínica -->
+      <div class="psych-note-box">
+        <strong>Observación:</strong> La HRV mostró una caída sostenida entre S3 y S5 (coincide con semana de parciales). La recuperación parcial en S6–Hoy sugiere reducción del estrés fisiológico, aunque aún por debajo de la línea base (S1: 62 ms).
+      </div>
+
+      <!-- Registro diario reciente -->
+      <div class="h-card">
+        <div class="h-card-title">Registro diario · Última semana</div>
+        <table class="scores-table">
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>HRV (ms)</th>
+              <th>FC reposo</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Lun 10</td>
+              <td>52</td>
+              <td>71 bpm</td>
+              <td><span class="pill-sm pill-low">Normal</span></td>
+            </tr>
+            <tr>
+              <td>Mar 11</td>
+              <td>49</td>
+              <td>74 bpm</td>
+              <td><span class="pill-sm pill-mid">Límite</span></td>
+            </tr>
+            <tr>
+              <td>Mié 12</td>
+              <td>45</td>
+              <td>78 bpm</td>
+              <td><span class="pill-sm pill-mid">Límite</span></td>
+            </tr>
+            <tr>
+              <td>Jue 13</td>
+              <td>55</td>
+              <td>70 bpm</td>
+              <td><span class="pill-sm pill-low">Normal</span></td>
+            </tr>
+            <tr style="font-weight:700">
+              <td>Hoy ●</td>
+              <td style="color:var(--lila-deep)">58</td>
+              <td>68 bpm</td>
+              <td><span class="pill-sm pill-low">Normal</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /tab-hrv -->
+
+    <!-- ── PANEL PHQ / GAD ── -->
+    <div class="hist-panel" id="tab-scores">
+
+      <!-- Gráfica de barras agrupadas -->
+      <div class="h-card">
+        <div class="h-card-title">Evolución PHQ-9 y GAD-7 · 5 evaluaciones</div>
+        <div class="score-legend">
+          <div class="leg-item"><div class="leg-dot leg-phq"></div><span style="color:var(--lila-deep)">PHQ-9 (depresión)</span></div>
+          <div class="leg-item"><div class="leg-dot leg-gad"></div><span style="color:var(--sage)">GAD-7 (ansiedad)</span></div>
+        </div>
+        <!-- Escala máx: PHQ=27, GAD=21 → normalizamos a 70px max -->
+        <div style="display:flex;align-items:flex-end;gap:7px;height:70px;padding-bottom:0">
+          <!-- Eval 1: PHQ 6 → 15.6px, GAD 3 → 10px -->
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:70px">
+              <div class="sc-b phq" style="height:16px"></div>
+              <div class="sc-b gad" style="height:10px"></div>
+            </div>
+          </div>
+          <!-- Eval 2: PHQ 8 → 21px, GAD 5 → 17px -->
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:70px">
+              <div class="sc-b phq" style="height:21px"></div>
+              <div class="sc-b gad" style="height:17px"></div>
+            </div>
+          </div>
+          <!-- Eval 3: PHQ 13 → 34px, GAD 8 → 27px -->
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:70px">
+              <div class="sc-b phq hi" style="height:34px"></div>
+              <div class="sc-b gad hi" style="height:27px"></div>
+            </div>
+          </div>
+          <!-- Eval 4: PHQ 11 → 29px, GAD 6 → 20px -->
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:70px">
+              <div class="sc-b phq hi" style="height:29px"></div>
+              <div class="sc-b gad hi" style="height:20px"></div>
+            </div>
+          </div>
+          <!-- Eval 5 (hoy): PHQ 10 → 26px, GAD 5 → 17px -->
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:70px;position:relative">
+              <div class="sc-b phq hi" style="height:26px;background:var(--lila-deep);box-shadow:0 0 0 2px rgba(169,143,212,0.3)"></div>
+              <div class="sc-b gad hi" style="height:17px;background:var(--sage);box-shadow:0 0 0 2px rgba(124,158,138,0.3)"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Etiquetas de fecha -->
+        <div style="display:flex;gap:7px;margin-top:5px">
+          <div style="flex:1;text-align:center;font-size:0.55rem;color:var(--ink-mid);opacity:0.4;font-weight:700">Ene 20</div>
+          <div style="flex:1;text-align:center;font-size:0.55rem;color:var(--ink-mid);opacity:0.4;font-weight:700">Feb 3</div>
+          <div style="flex:1;text-align:center;font-size:0.55rem;color:var(--ink-mid);opacity:0.4;font-weight:700">Feb 17</div>
+          <div style="flex:1;text-align:center;font-size:0.55rem;color:var(--ink-mid);opacity:0.4;font-weight:700">Mar 3</div>
+          <div style="flex:1;text-align:center;font-size:0.55rem;color:var(--lila-deep);opacity:1;font-weight:700">Hoy ●</div>
+        </div>
+      </div>
+
+      <!-- Tabla detallada -->
+      <div class="h-card">
+        <div class="h-card-title">Historial completo de evaluaciones</div>
+        <table class="scores-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>PHQ-9</th>
+              <th>GAD-7</th>
+              <th>Nivel</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>20 ene</td>
+              <td>6</td>
+              <td>3</td>
+              <td><span class="pill-sm pill-low">Leve</span></td>
+            </tr>
+            <tr>
+              <td>3 feb</td>
+              <td>8</td>
+              <td>5</td>
+              <td><span class="pill-sm pill-low">Leve</span></td>
+            </tr>
+            <tr>
+              <td>17 feb</td>
+              <td>13</td>
+              <td>8</td>
+              <td><span class="pill-sm pill-high">Moderado-alto</span></td>
+            </tr>
+            <tr>
+              <td>3 mar</td>
+              <td>11</td>
+              <td>6</td>
+              <td><span class="pill-sm pill-mid">Moderado</span></td>
+            </tr>
+            <tr style="font-weight:700">
+              <td>Hoy ●</td>
+              <td style="color:var(--lila-deep)">10</td>
+              <td style="color:var(--sage)">5</td>
+              <td><span class="pill-sm pill-mid">Moderado</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Nota clínica -->
+      <div class="psych-note-box">
+        <strong>Observación:</strong> El pico del 17 feb coincide con semana de parciales y la HRV mínima registrada (38 ms). La tendencia actual es levemente descendente en PHQ-9, lo que sugiere mejoría gradual. Se recomienda continuar seguimiento quincenal y reforzar estrategias de TCC para regulación del sueño.
+      </div>
+    </div><!-- /tab-scores -->
+
+    <!-- ── PANEL SÍNTOMAS ── -->
+    <div class="hist-panel" id="tab-symptoms">
+
+      <!-- Resumen de frecuencia -->
+      <div class="h-card">
+        <div class="h-card-title">Síntomas más frecuentes · Últimas 4 semanas</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <!-- Sueño -->
+          <div style="display:flex;align-items:center;gap:9px">
+            <span class="sym-tag st-sleep" style="min-width:90px;justify-content:center">😴 Sueño</span>
+            <div style="flex:1;height:8px;background:var(--lila-pale);border-radius:50px;overflow:hidden">
+              <div style="width:86%;height:100%;background:var(--lila-deep);border-radius:50px"></div>
+            </div>
+            <span style="font-size:0.7rem;font-weight:700;color:var(--ink-mid);min-width:28px">6/7</span>
+          </div>
+          <!-- Concentración -->
+          <div style="display:flex;align-items:center;gap:9px">
+            <span class="sym-tag st-focus" style="min-width:90px;justify-content:center">🧠 Concentración</span>
+            <div style="flex:1;height:8px;background:var(--lila-pale);border-radius:50px;overflow:hidden">
+              <div style="width:57%;height:100%;background:#2A6090;border-radius:50px;opacity:0.7"></div>
+            </div>
+            <span style="font-size:0.7rem;font-weight:700;color:var(--ink-mid);min-width:28px">4/7</span>
+          </div>
+          <!-- Energía -->
+          <div style="display:flex;align-items:center;gap:9px">
+            <span class="sym-tag st-energy" style="min-width:90px;justify-content:center">⚡ Energía</span>
+            <div style="flex:1;height:8px;background:var(--lila-pale);border-radius:50px;overflow:hidden">
+              <div style="width:71%;height:100%;background:var(--mid-color);border-radius:50px;opacity:0.8"></div>
+            </div>
+            <span style="font-size:0.7rem;font-weight:700;color:var(--ink-mid);min-width:28px">5/7</span>
+          </div>
+          <!-- Ánimo bajo -->
+          <div style="display:flex;align-items:center;gap:9px">
+            <span class="sym-tag st-mood" style="min-width:90px;justify-content:center">😔 Ánimo bajo</span>
+            <div style="flex:1;height:8px;background:var(--lila-pale);border-radius:50px;overflow:hidden">
+              <div style="width:43%;height:100%;background:var(--high-color);border-radius:50px;opacity:0.7"></div>
+            </div>
+            <span style="font-size:0.7rem;font-weight:700;color:var(--ink-mid);min-width:28px">3/7</span>
+          </div>
+          <!-- Apetito -->
+          <div style="display:flex;align-items:center;gap:9px">
+            <span class="sym-tag st-appetite" style="min-width:90px;justify-content:center">🍽️ Apetito</span>
+            <div style="flex:1;height:8px;background:var(--lila-pale);border-radius:50px;overflow:hidden">
+              <div style="width:29%;height:100%;background:#904020;border-radius:50px;opacity:0.6"></div>
+            </div>
+            <span style="font-size:0.7rem;font-weight:700;color:var(--ink-mid);min-width:28px">2/7</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registros individuales del chatbot -->
+      <div class="sym-entry">
+        <div class="sym-date-row">
+          <span class="sym-date">Hoy · 12 mar, 9:52 AM</span>
+          <span class="sym-source">🤖 Chatbot</span>
+        </div>
+        <div class="sym-tags">
+          <span class="sym-tag st-sleep">😴 Insomnio</span>
+          <span class="sym-tag st-focus">🧠 Concentración baja</span>
+          <span class="sym-tag st-energy">⚡ Cansancio</span>
+        </div>
+        <div class="sym-note">"Casi no dormí esta semana, los proyectos se acumularon y me cuesta concentrarme en clase."</div>
+      </div>
+
+      <div class="sym-entry">
+        <div class="sym-date-row">
+          <span class="sym-date">10 mar, 8:15 PM</span>
+          <span class="sym-source">🤖 Chatbot</span>
+        </div>
+        <div class="sym-tags">
+          <span class="sym-tag st-sleep">😴 Sueño fragmentado</span>
+          <span class="sym-tag st-mood">😔 Ánimo bajo</span>
+        </div>
+        <div class="sym-note">"Me desperté varias veces en la noche pensando en los exámenes."</div>
+      </div>
+
+      <div class="sym-entry">
+        <div class="sym-date-row">
+          <span class="sym-date">7 mar, 9:05 AM</span>
+          <span class="sym-source">🤖 Chatbot</span>
+        </div>
+        <div class="sym-tags">
+          <span class="sym-tag st-energy">⚡ Sin energía</span>
+          <span class="sym-tag st-appetite">🍽️ Poco apetito</span>
+          <span class="sym-tag st-focus">🧠 Distracción</span>
+        </div>
+        <div class="sym-note">"No tengo ganas de comer bien, vivo de café. Me siento muy dispersa."</div>
+      </div>
+
+      <div class="sym-entry">
+        <div class="sym-date-row">
+          <span class="sym-date">4 mar, 7:30 PM</span>
+          <span class="sym-source">🤖 Chatbot</span>
+        </div>
+        <div class="sym-tags">
+          <span class="sym-tag st-ok">✅ Sin síntomas</span>
+        </div>
+        <div class="sym-note">"Hoy fue un buen día, entregué el proyecto y dormí bien anoche."</div>
+      </div>
+
+      <div class="sym-entry">
+        <div class="sym-date-row">
+          <span class="sym-date">1 mar, 9:20 AM</span>
+          <span class="sym-source">🤖 Chatbot</span>
+        </div>
+        <div class="sym-tags">
+          <span class="sym-tag st-sleep">😴 Insomnio</span>
+          <span class="sym-tag st-mood">😔 Ánimo bajo</span>
+          <span class="sym-tag st-social">🤝 Aislamiento</span>
+        </div>
+        <div class="sym-note">"No salí con mis amigos, prefiero quedarme sola. No me siento con ganas de nada."</div>
+      </div>
+
+      <!-- Nota clínica -->
+      <div class="psych-note-box" style="margin-top:2px">
+        <strong>Patrón identificado:</strong> Los síntomas se intensifican los domingos-lunes (inicio de semana lectiva) y mejoran los jueves-viernes. El insomnio es el síntoma más persistente y coincide directamente con los valores de HRV más bajos. Prioridad en técnicas de higiene del sueño.
+      </div>
+
+    </div><!-- /tab-symptoms -->
+
+  </div><!-- /hist-body -->
+
+  <div class="bnav">
+    <button class="bn-item"><span class="bn-icon">🏠</span><span class="bn-label">Inicio</span></button>
+    <button class="bn-item active"><span class="bn-icon">👥</span><span class="bn-label">Pacientes</span></button>
+    <button class="bn-item"><span class="bn-icon">📅</span><span class="bn-label">Agenda</span></button>
+    <button class="bn-item"><span class="bn-icon">💬</span><span class="bn-label">Mensajes</span></button>
+    <button class="bn-item"><span class="bn-icon">📊</span><span class="bn-label">Reportes</span></button>
+  </div>
+</div>
+
+<p class="disclaimer">Prototipo ilustrativo · Los datos mostrados son ficticios · EmotIA no es un dispositivo médico · Solo un profesional puede diagnosticar</p>
+
+<script>
+  /* ── NAVEGACIÓN ENTRE PANTALLAS ── */
+  function show(id, btn) {
+    document.querySelectorAll('.phone').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const phone = document.getElementById('phone-' + id);
+    phone.classList.add('active');
+    btn.classList.add('active');
+    phone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  /* ── MOOD DOTS (DASHBOARD) ── */
+  document.querySelectorAll('.m-dot').forEach(d => {
+    d.addEventListener('click', () => {
+      d.closest('.mood-emojis').querySelectorAll('.m-dot').forEach(x => x.style.outline = 'none');
+      d.style.outline = '2.5px solid var(--lila-deep)';
+    });
+  });
+
+  /* ── MOOD SCALE ── */
+  document.querySelectorAll('.ms-opt').forEach(o => {
+    o.addEventListener('click', () => {
+      o.closest('.mood-scale-row').querySelectorAll('.ms-opt').forEach(x => x.classList.remove('selected'));
+      o.classList.add('selected');
+    });
+  });
+
+  /* ── SLOTS AGENDA ── */
+  document.querySelectorAll('.slot:not(.taken)').forEach(s => {
+    s.addEventListener('click', () => {
+      s.closest('.slots-grid').querySelectorAll('.slot').forEach(x => x.classList.remove('sel'));
+      s.classList.add('sel');
+    });
+  });
+
+  /* ── PSYCH TILES ── */
+  document.querySelectorAll('.psych-tile').forEach(t => {
+    t.addEventListener('click', () => {
+      t.closest('.sched-body').querySelectorAll('.psych-tile').forEach(x => x.classList.remove('sel'));
+      t.classList.add('sel');
+    });
+  });
+
+  /* ══════════════════════════════════════
+     CHATBOT PHQ / GAD — LÓGICA INTERACTIVA
+  ══════════════════════════════════════ */
+
+  // Preguntas PHQ-9
+  const PHQ = [
+    "¿Con qué frecuencia te has sentido con poco interés o placer en hacer las cosas?",
+    "¿Te has sentido decaída, deprimida o sin esperanza?",
+    "¿Has tenido dificultad para quedarte dormida, permanecer dormida, o has dormido demasiado?",
+    "¿Te has sentido cansada o con poca energía?",
+    "¿Has tenido poco apetito o has comido en exceso?",
+    "¿Te has sentido mal contigo misma, o has creído que eres un fracaso o que has fallado a tu familia?",
+    "¿Has tenido dificultad para concentrarte en cosas como leer o ver televisión?",
+    "¿Te has movido o has hablado tan lento que la gente lo nota? ¿O lo contrario: muy agitada o inquieta?",
+    "¿Has tenido pensamientos de que estarías mejor muerta o de lastimarte de alguna manera?"
+  ];
+
+  // Preguntas GAD-7
+  const GAD = [
+    "¿Te has sentido nerviosa, ansiosa o al límite?",
+    "¿No has podido dejar de preocuparte o controlar tu preocupación?",
+    "¿Te has preocupado demasiado por diferentes cosas?",
+    "¿Has tenido dificultad para relajarte?",
+    "¿Te has sentido tan inquieta que no has podido quedarte quieta?",
+    "¿Te has molestado o irritado fácilmente?",
+    "¿Has sentido miedo de que algo terrible pudiera pasar?"
+  ];
+
+  const OPTIONS_PHQ = ["Para nada", "Varios días", "Más de la mitad de los días", "Casi todos los días"];
+  const OPTIONS_GAD = ["Para nada", "Varios días", "Más de la mitad de los días", "Casi todos los días"];
+
+  let currentSection = 'phq'; // 'phq' | 'gad' | 'done'
+  let currentQ = 2;           // ya respondidas: 0,1 → activa: 2
+  let phqAnswers = [1, 2];    // respuestas dadas
+  let gadAnswers = [];
+  let awaitingNext = false;
+
+  // Construir barra de progreso
+  function buildProgressBar() {
+    const track = document.getElementById('prog-track');
+    if (!track) return;
+    track.innerHTML = '';
+    for (let i = 0; i < 9; i++) {
+      const seg = document.createElement('div');
+      seg.className = 'bot-prog-seg phq';
+      if (i < phqAnswers.length) seg.classList.add('done');
+      else if (i === phqAnswers.length && currentSection === 'phq') seg.classList.add('active');
+      track.appendChild(seg);
+    }
+    for (let i = 0; i < 7; i++) {
+      const seg = document.createElement('div');
+      seg.className = 'bot-prog-seg gad';
+      if (i < gadAnswers.length) seg.classList.add('done');
+      else if (i === gadAnswers.length && currentSection === 'gad') seg.classList.add('active');
+      track.appendChild(seg);
+    }
+  }
+
+  function updateProgressLabel() {
+    const label = document.querySelector('#phone-boteval .bot-prog-label');
+    const step  = document.querySelector('#phone-boteval .bot-prog-step');
+    if (!label || !step) return;
+    if (currentSection === 'phq') {
+      label.textContent = 'PHQ-9 · Depresión';
+      step.textContent  = `Pregunta ${phqAnswers.length + 1} de 9`;
+    } else if (currentSection === 'gad') {
+      label.textContent = 'GAD-7 · Ansiedad';
+      step.textContent  = `Pregunta ${gadAnswers.length + 1} de 7`;
+    } else {
+      label.textContent = '¡Evaluación completada!';
+      step.textContent  = '16 / 16';
+    }
+  }
+
+  buildProgressBar();
+
+  /* Seleccionar opción en la pregunta activa */
+  function selectOpt(btn, score) {
+    if (awaitingNext) return;
+    const opts = document.getElementById('active-opts');
+    if (!opts) return;
+
+    // Marcar seleccionada
+    opts.querySelectorAll('.answer-opt').forEach(o => o.classList.remove('selected', 'selected-gad'));
+    if (currentSection === 'gad') {
+      btn.classList.add('selected-gad');
+    } else {
+      btn.classList.add('selected');
+    }
+
+    awaitingNext = true;
+    const hint = document.getElementById('bot-hint');
+    if (hint) hint.textContent = 'Cargando siguiente pregunta...';
+
+    // Guardar respuesta
+    if (currentSection === 'phq') phqAnswers.push(score);
+    else gadAnswers.push(score);
+
+    // Bloquear opciones
+    opts.querySelectorAll('.answer-opt').forEach(o => { o.disabled = true; o.onclick = null; });
+
+    // Añadir burbuja de respuesta enviada
+    setTimeout(() => {
+      addSentBubble(btn.textContent.trim());
+      buildProgressBar();
+      updateProgressLabel();
+
+      // Mostrar typing
+      const typing = document.getElementById('typing');
+      if (typing) { typing.style.display = 'flex'; scrollBottom(); }
+
+      setTimeout(() => {
+        if (typing) typing.style.display = 'none';
+        advanceQuestion(score);
+        awaitingNext = false;
+        if (hint) hint.textContent = 'Toca una opción para responder';
+      }, 1200);
+    }, 300);
+  }
+
+  function addSentBubble(text) {
+    const msgs = document.getElementById('bot-msgs');
+    const typing = document.getElementById('typing');
+    const div = document.createElement('div');
+    div.className = 'bot-sent';
+    div.innerHTML = `<div class="bot-bubble-sent">${text}</div><span class="bot-t">${getTime()}</span>`;
+    msgs.insertBefore(div, typing);
+    scrollBottom();
+  }
+
+  function addRecvBubble(html, extraClass) {
+    const msgs = document.getElementById('bot-msgs');
+    const typing = document.getElementById('typing');
+    const div = document.createElement('div');
+    div.className = 'bot-recv';
+    const bg = extraClass ? ` style="background:var(--sage-pale);border-color:var(--sage-light);"` : '';
+    div.innerHTML = `<div class="bot-bubble-recv"${bg}>${html}</div><span class="bot-t">${getTime()}</span>`;
+    msgs.insertBefore(div, typing);
+    scrollBottom();
+  }
+
+  function addNewOptions(questions, idx, isGad) {
+    const msgs = document.getElementById('bot-msgs');
+    const typing = document.getElementById('typing');
+
+    // Etiqueta de sección
+    const section = currentSection === 'gad' ? 'GAD-7' : 'PHQ-9';
+    const total   = currentSection === 'gad' ? 7 : 9;
+    const badgeClass = currentSection === 'gad' ? 'badge-gad' : 'badge-phq';
+
+    // Burbuja de pregunta
+    const qDiv = document.createElement('div');
+    qDiv.className = 'bot-recv';
+    qDiv.innerHTML = `<div class="bot-bubble-recv">
+      <span class="section-badge ${badgeClass}">${section} · ${idx + 1}/${total}</span><br>
+      <strong>${questions[idx]}</strong>
+    </div><span class="bot-t">${getTime()}</span>`;
+    msgs.insertBefore(qDiv, typing);
+
+    // Opciones
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'answer-opts';
+    optsDiv.id = 'active-opts';
+    const opts = isGad ? OPTIONS_GAD : OPTIONS_PHQ;
+    opts.forEach((label, i) => {
+      const scoreClass = isGad ? 'opt-score opt-score-gad' : 'opt-score';
+      const selFn = isGad ? `selectOptGad(this, ${i})` : `selectOpt(this, ${i})`;
+      optsDiv.innerHTML += `<button class="answer-opt" onclick="${selFn}">
+        <span class="${scoreClass}">${i}</span>${label}
+      </button>`;
+    });
+    msgs.insertBefore(optsDiv, typing);
+    scrollBottom();
+  }
+
+  function advanceQuestion(score) {
+    const msgs = document.getElementById('bot-msgs');
+    const typing = document.getElementById('typing');
+
+    if (currentSection === 'phq') {
+      currentQ = phqAnswers.length;
+
+      // Pregunta especial PHQ-9 pregunta 9 (suicidio) — mensaje empático
+      if (currentQ === 8) {
+        addRecvBubble('Esta es la última pregunta del PHQ-9. Recuerda que es completamente confidencial y no hay respuesta correcta o incorrecta. 🌿');
+        setTimeout(() => { addNewOptions(PHQ, 8, false); }, 200);
+        return;
+      }
+
+      if (currentQ < 9) {
+        addNewOptions(PHQ, currentQ, false);
+      } else {
+        // PHQ completado → mostrar resumen y transición a GAD
+        const total = phqAnswers.reduce((a, b) => a + b, 0);
+        const nivel = total <= 4 ? 'Mínimo' : total <= 9 ? 'Leve' : total <= 14 ? 'Moderado' : total <= 19 ? 'Moderado-severo' : 'Severo';
+        const color = total <= 9 ? 'low' : total <= 14 ? '' : 'high';
+
+        const sumDiv = document.createElement('div');
+        sumDiv.className = 'section-summary bot-recv';
+        sumDiv.style.marginTop = '4px';
+        sumDiv.innerHTML = `
+          <div class="sum-title">✅ PHQ-9 completado</div>
+          <div class="sum-score-row">
+            <span class="sum-num ${color}">${total}</span>
+            <span class="sum-tag"><strong>${nivel}</strong><br>Puntaje PHQ-9 (0–27)</span>
+          </div>`;
+        msgs.insertBefore(sumDiv, typing);
+
+        setTimeout(() => {
+          // Separador GAD
+          const sep = document.createElement('div');
+          sep.className = 'section-sep';
+          sep.innerHTML = `<div class="sep-line"></div>
+            <span class="sep-badge sep-gad">🌿 GAD-7 · Ansiedad · 7 preguntas</span>
+            <div class="sep-line"></div>`;
+          msgs.insertBefore(sep, typing);
+
+          addRecvBubble('¡Muy bien! Ahora pasamos al <strong>GAD-7</strong>, un cuestionario de 7 preguntas sobre ansiedad. 🌿 Igual que antes: ¿con qué frecuencia en las últimas dos semanas...?');
+
+          currentSection = 'gad';
+          buildProgressBar();
+          updateProgressLabel();
+
+          setTimeout(() => { addNewOptions(GAD, 0, true); }, 400);
+        }, 600);
+      }
+
+    } else if (currentSection === 'gad') {
+      const idx = gadAnswers.length;
+      if (idx < 7) {
+        addNewOptions(GAD, idx, true);
+      } else {
+        // GAD completado
+        const totalGad = gadAnswers.reduce((a, b) => a + b, 0);
+        const nivelGad = totalGad <= 4 ? 'Mínima' : totalGad <= 9 ? 'Leve' : totalGad <= 14 ? 'Moderada' : 'Severa';
+
+        const sumDiv = document.createElement('div');
+        sumDiv.className = 'section-summary bot-recv';
+        sumDiv.style.marginTop = '4px';
+        sumDiv.innerHTML = `
+          <div class="sum-title">✅ GAD-7 completado</div>
+          <div class="sum-score-row">
+            <span class="sum-num low">${totalGad}</span>
+            <span class="sum-tag"><strong>${nivelGad}</strong><br>Puntaje GAD-7 (0–21)</span>
+          </div>`;
+        msgs.insertBefore(sumDiv, typing);
+
+        currentSection = 'done';
+        buildProgressBar();
+        updateProgressLabel();
+
+        const hint = document.getElementById('bot-hint');
+        if (hint) hint.style.display = 'none';
+
+        const totalPhq = phqAnswers.reduce((a, b) => a + b, 0);
+        const nivelPhq = totalPhq <= 4 ? 'Mínimo' : totalPhq <= 9 ? 'Leve' : totalPhq <= 14 ? 'Moderado' : totalPhq <= 19 ? 'Moderado-severo' : 'Severo';
+
+        setTimeout(() => {
+          addRecvBubble(`¡Listo, Valeria! 🎉 Completaste toda la evaluación. Aquí está tu resumen:<br><br>
+            <strong>PHQ-9:</strong> ${totalPhq} pts → ${nivelPhq}<br>
+            <strong>GAD-7:</strong> ${totalGad} pts → ${nivelGad}<br><br>
+            Ahora puedo enviarte tu <strong>perfil de bienestar completo</strong> junto con tu HRV del día. ¿Quieres verlo?`);
+
+          // Botón de acción final
+          setTimeout(() => {
+            const finDiv = document.createElement('div');
+            finDiv.className = 'answer-opts';
+            finDiv.style.maxWidth = '94%';
+            finDiv.innerHTML = `
+              <button class="answer-opt" style="background:linear-gradient(135deg,var(--lila-deep),#8A6BC4);color:white;border-color:var(--lila-deep);" onclick="this.closest('.answer-opts').remove();addSentBubble('Sí, ver mi resultado 📊')">
+                <span style="font-size:1rem">📊</span> Sí, ver mi resultado completo
+              </button>
+              <button class="answer-opt" onclick="this.closest('.answer-opts').remove();addSentBubble('Agendar cita con psicólogo')">
+                <span style="font-size:1rem">📅</span> Agendar cita con psicólogo
+              </button>`;
+            const t2 = document.getElementById('typing');
+            msgs.insertBefore(finDiv, t2);
+            scrollBottom();
+          }, 400);
+        }, 800);
+      }
+    }
+    scrollBottom();
+  }
+
+  // Versión para GAD (misma lógica, alias necesario por onclick inline)
+  function selectOptGad(btn, score) {
+    selectOpt(btn, score);
+  }
+
+  function scrollBottom() {
+    const msgs = document.getElementById('bot-msgs');
+    if (msgs) setTimeout(() => { msgs.scrollTop = msgs.scrollHeight; }, 50);
+  }
+
+  function getTime() {
+    const now = new Date();
+    return `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+  }
+
+  // Init
+  buildProgressBar();
+  updateProgressLabel();
+
+  /* ── TABS HISTORIAL ── */
+  function switchTab(id, btn) {
+    document.querySelectorAll('#phone-historial .hist-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('#phone-historial .h-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
